@@ -1,0 +1,14 @@
+
+{
+    "manifest_version": 3,
+    "name": "osu! Rate Editor",
+    "version": "1.0.0",
+
+    "action": {
+        "default_title": "osu! rate editor",
+        "default_popup": "src/menu.html",
+        "default_icon": "images/placeholder_icon.png"
+    },
+    "description": "A web extension editor for osu! beatmaps. Edit the AR, CS, BPM, etc. and download your own custom diffs with this nifty tool.",
+    "homepage_url": "https://github.com/HDCat2/rate-editor"
+}
