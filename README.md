@@ -2,11 +2,13 @@
 
 TODO:
 
-figure out how to make a web extension
+<del>figure out how to make a web extension</del>
+
+figure out a good web extension menu
+
+figure out a second web extension menu and how to make it display only on beatmap pages
 
 figure out how to make a web extension modify files
-
-figure out how to make it only run on osu
 
 figure out how to make it look good
 
