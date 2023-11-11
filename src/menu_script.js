@@ -8,12 +8,25 @@ function display_supported() {
     document.getElementById("root_div").innerHTML = "lmao";
 }
 
-let opts = { active: true, lastFocusedWindow: true };
-let [url] = await chrome.tabs.query(opts);
-let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/[0-9]+#(osu|fruits|taiko|mania)\/[0-9]+$")
-
-if (match_osu_url.test(url)) {
-    display_supported();
-} else {
-    display_unsupported();
+async function getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions);
+    console.log("got tab", tab.url);
+    return tab;
 }
+
+let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/[0-9]+#(osu|fruits|taiko|mania)\/[0-9]+$");
+
+async function main() {
+    const tab = await getCurrentTab();
+    const url = tab.url;
+
+    if (match_osu_url.test(url)) {
+        display_supported();
+    } else {
+        display_unsupported();
+    }
+}
+
+main();
