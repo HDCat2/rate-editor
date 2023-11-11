@@ -14,7 +14,7 @@ div.unsupported {
 div.supported {
     background-color: rgb(50,50,50);
     width: 300px;
-    height: 600px;
+    height: 400px;
     border: 1px solid white;
     padding: 50px;
     margin: auto;

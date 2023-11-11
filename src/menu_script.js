@@ -4,8 +4,24 @@ function display_unsupported() {
 }
 
 function display_supported() {
-    document.getElementById("root_div").className = "supported";
-    document.getElementById("root_div").innerHTML = "lmao";
+    var root_div = document.getElementById("root_div")
+    var form = document.createElement('form');
+
+    var input_bpm = document.createElement('input');
+    var input_ar = document.createElement('input');
+    var input_cs = document.createElement('input');
+    var input_od = document.createElement('input');
+    var input_hp = document.createElement('input');
+
+    form.appendChild(input_bpm);
+    form.appendChild(input_ar);
+    form.appendChild(input_cs);
+    form.appendChild(input_od);
+    form.appendChild(input_hp);
+
+    root_div.setAttribute('title', 'placeholder');
+    root_div.className = "supported";
+    root_div.appendChild(form);
 }
 
 async function getCurrentTab() {
