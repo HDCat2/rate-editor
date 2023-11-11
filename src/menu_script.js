@@ -1,20 +1,19 @@
-/*function get_tab() {
-    let opts = { active: true, lastFocusedWindow: true };
-    let [tab] = await chrome.tabs.query(opts);
-    return tab;
-}*/
-
-function set_style() {
-
-}
-
 function display_unsupported() {
     document.getElementById("root_div").className = "unsupported";
     document.getElementById("root_div").innerHTML = "This extension does not support this webpage 😭";
 }
 
-//let url = get_tab();
-//let match_osu_url = new RegExp("https://osu.ppy.sh/beatmapsets/")
+function display_supported() {
+    document.getElementById("root_div").className = "unsupported";
+    document.getElementById("root_div").innerHTML = "lmao";
+}
 
+let opts = { active: true, lastFocusedWindow: true };
+let [url] = await chrome.tabs.query(opts);
+let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/[0-9]+#(osu|fruits|taiko|mania)\/[0-9]+$")
 
-display_unsupported();
+if (match_osu_url.test(url)) {
+    display_supported();
+} else {
+    display_unsupported();
+}
