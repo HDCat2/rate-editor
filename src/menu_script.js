@@ -1,16 +1,15 @@
 function display_unsupported() {
     document.getElementById("root_div").className = "unsupported";
-    document.getElementById("root_div").innerHTML = "This extension does not support this webpage 😭";
+    document.getElementById("root_div").innerHTML = "This extension does not support this webpage :c";
 }
 
 function display_supported() {
-    document.getElementById("root_div").className = "unsupported";
+    document.getElementById("root_div").className = "supported";
     document.getElementById("root_div").innerHTML = "lmao";
 }
 
 async function getCurrentTab() {
     let queryOptions = { active: true, lastFocusedWindow: true };
-    // `tab` will either be a `tabs.Tab` instance or `undefined`.
     let [tab] = await chrome.tabs.query(queryOptions);
     console.log("got tab", tab.url);
     return tab;

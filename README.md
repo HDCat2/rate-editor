@@ -8,6 +8,8 @@ TODO:
 
 figure out a basic second web extension menu and how to make it display only on beatmap pages
 
+figure out how to make a web extension unzip .osu files
+
 figure out how to make a web extension modify downloaded files
 
 figure out what needs to be modified on .osu files

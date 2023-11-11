@@ -10,6 +10,20 @@ div.unsupported {
     text-align: center;
     color: white;
 }
+
+div.supported {
+    background-color: rgb(50,50,50);
+    width: 300px;
+    height: 600px;
+    border: 1px solid white;
+    padding: 50px;
+    margin: auto;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+}
+
 body {
     margin: 0px !important;
 }
