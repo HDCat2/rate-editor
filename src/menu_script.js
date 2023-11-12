@@ -46,9 +46,10 @@ async function getCurrentTab() {
     return tab;
 }
 
-let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/[0-9]+#(osu|fruits|taiko|mania)\/[0-9]+$");
-let beatmap_download_url = "https://osu.ppy.sh/beatmapsets/"
-
+let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/([0-9]+)#(osu|fruits|taiko|mania)\/([0-9]+)$");
+let beatmap_id;
+let beatmap_mode;
+let diff_id;
 
 async function main() {
     const tab = await getCurrentTab();
@@ -56,7 +57,13 @@ async function main() {
 
     if (match_osu_url.test(url)) {
         display_supported();
-
+        let extract_ids = url.match(match_osu_url);
+        beatmap_id = extract_ids[1];
+        beatmap_mode = extract_ids[2];
+        diff_id = extract_ids[3];
+        console.log(beatmap_id);
+        console.log(beatmap_mode);
+        console.log(diff_id);
     } else {
         display_unsupported();
     }
