@@ -16,6 +16,7 @@
         "tabs"
     ],
     "host_permissions": [
-        "https://osu.ppy.sh/*"
+        "https://osu.ppy.sh/*",
+        "https://api.chimu.moe/*"
     ]
 }

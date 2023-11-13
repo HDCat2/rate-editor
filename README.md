@@ -10,7 +10,7 @@ TODO:
 
 <del>figure out how to parse regex</del>
 
-figure out how to fetch requisite .osz files
+<del>figure out how to fetch requisite .osz files</del>
 
 figure out how to make a web extension unzip .osz files
 

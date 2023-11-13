@@ -1,5 +1,5 @@
 let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/([0-9]+)#(osu|fruits|taiko|mania)\/([0-9]+)$");
-let beatmap_id;
+let set_id;
 let beatmap_mode;
 let diff_id;
 
@@ -50,7 +50,10 @@ async function getCurrentTab() {
 
 async function handleDownload() {
     console.log("reading...");
-    let osz = await fetch("https://osu.ppy.sh/beatmapsets/" + beatmap_id + "/download", {credentials: "same-origin"}).then(r => r.blob());
+    let osz = await fetch("https://api.chimu.moe/v1/download/" + set_id + "/");
+    console.log(osz.status);
+    console.log(osz.headers.get("Content-Type"));
+    osz = await osz.blob();
     console.log("read!");
     console.log(osz.size);
     let reader = new zip.ZipReader(new zip.BlobReader(osz));
@@ -66,7 +69,7 @@ async function main() {
     if (match_osu_url.test(url)) {
         display_supported();
         let extract_ids = url.match(match_osu_url);
-        beatmap_id = extract_ids[1];
+        set_id = extract_ids[1];
         beatmap_mode = extract_ids[2];
         diff_id = extract_ids[3];
     } else {
