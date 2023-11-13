@@ -10,9 +10,9 @@ TODO:
 
 <del>figure out how to parse regex</del>
 
-figure out how to fetch requisite .osu files
+figure out how to fetch requisite .osz files
 
-figure out how to make a web extension unzip .osu files
+figure out how to make a web extension unzip .osz files
 
 figure out how to make a web extension modify downloaded files
 

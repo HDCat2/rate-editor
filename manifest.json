@@ -12,6 +12,7 @@
     "description": "A web extension editor for osu! beatmaps, capable of downloading custom diffs with modified AR, CS, BPM, and other attributes.",
     "homepage_url": "https://github.com/HDCat2/rate-editor",
     "permissions": [
+        "downloads",
         "tabs"
     ]
 }

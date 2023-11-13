@@ -61,9 +61,6 @@ async function main() {
         beatmap_id = extract_ids[1];
         beatmap_mode = extract_ids[2];
         diff_id = extract_ids[3];
-        console.log(beatmap_id);
-        console.log(beatmap_mode);
-        console.log(diff_id);
     } else {
         display_unsupported();
     }
