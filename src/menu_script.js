@@ -1,6 +1,7 @@
-function handleDownload() {
-    console.log("lmao");
-}
+let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/([0-9]+)#(osu|fruits|taiko|mania)\/([0-9]+)$");
+let beatmap_id;
+let beatmap_mode;
+let diff_id;
 
 function display_unsupported() {
     document.getElementById("root_div").className = "unsupported";
@@ -30,6 +31,7 @@ function display_supported() {
     form.appendChild(input_hp);
 
     var download_button = document.createElement('button');
+    download_button.innerHTML = 'Download!';
     download_button.setAttribute('id', 'download_button');
     download_button.addEventListener('click', handleDownload);
 
@@ -46,10 +48,16 @@ async function getCurrentTab() {
     return tab;
 }
 
-let match_osu_url = new RegExp("^https:\/\/osu\.ppy\.sh\/beatmapsets\/([0-9]+)#(osu|fruits|taiko|mania)\/([0-9]+)$");
-let beatmap_id;
-let beatmap_mode;
-let diff_id;
+async function handleDownload() {
+    console.log("reading...");
+    let osz = await fetch("https://osu.ppy.sh/beatmapsets/" + beatmap_id + "/download", {credentials: "same-origin"}).then(r => r.blob());
+    console.log("read!");
+    console.log(osz.size);
+    let reader = new zip.ZipReader(new zip.BlobReader(osz));
+    var arr = await reader.getEntries();
+    console.log(arr);
+    
+}
 
 async function main() {
     const tab = await getCurrentTab();

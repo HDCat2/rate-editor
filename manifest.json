@@ -14,5 +14,8 @@
     "permissions": [
         "downloads",
         "tabs"
+    ],
+    "host_permissions": [
+        "https://osu.ppy.sh/*"
     ]
 }
