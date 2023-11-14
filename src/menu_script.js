@@ -56,10 +56,12 @@ async function handleDownload() {
     osz = await osz.blob();
     console.log("read!");
     console.log(osz.size);
-    let reader = new zip.ZipReader(new zip.BlobReader(osz));
-    var arr = await reader.getEntries();
+    const reader = new zip.ZipReader(new zip.BlobReader(osz));
+    var arr = await reader.getEntries({filenameEncoding : "utf-8"});
     console.log(arr);
-    
+    for (var i = 0; i < arr.length; i++) {
+        console.log(arr[i].filename);
+    }
 }
 
 async function main() {

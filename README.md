@@ -12,7 +12,7 @@ TODO:
 
 <del>figure out how to fetch requisite .osz files</del>
 
-figure out how to make a web extension unzip .osz files
+<del>figure out how to make a web extension unzip .osz files</del>
 
 figure out how to make a web extension modify downloaded files
 
