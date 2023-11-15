@@ -31,7 +31,7 @@ function display_supported() {
     var input_cs = document.createElement('input');
     var input_od = document.createElement('input');
     var input_hp = document.createElement('input');
-    input_name.setAttribute('id', 'input_diff_name');
+    input_diff_name.setAttribute('id', 'input_diff_name');
     input_bpm.setAttribute('id', 'input_bpm');
     input_ar.setAttribute('id', 'input_ar');
     input_cs.setAttribute('id', 'input_cs');
@@ -48,7 +48,7 @@ function display_supported() {
     var reset_button = document.createElement('button');
     reset_button.innerHTML = 'Reset Selection';
     reset_button.setAttribute('id', 'reset_button');
-    reset_button.addEventListener('click', handleReset);
+    reset_button.addEventListener('click', fillDefault);
 
     var download_button = document.createElement('button');
     download_button.innerHTML = 'Download!';
@@ -63,7 +63,13 @@ function display_supported() {
 }
 
 function fillDefault() {
-    document.getElementById('input_bpm') = set_info.ChildrenBeatmaps[set_index].BPM;
+    console.log("resetting");
+    document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName;
+    document.getElementById('input_bpm').value = set_info.ChildrenBeatmaps[set_index].BPM;
+    document.getElementById('input_ar').value = set_info.ChildrenBeatmaps[set_index].AR;
+    document.getElementById('input_cs').value = set_info.ChildrenBeatmaps[set_index].OD;
+    document.getElementById('input_od').value = set_info.ChildrenBeatmaps[set_index].CS;
+    document.getElementById('input_hp').value = set_info.ChildrenBeatmaps[set_index].HP;
 }
 
 async function get_vals() {
@@ -100,6 +106,13 @@ async function get_vals() {
 
     console.log(set_info);
     console.log(set_index);
+
+    document.getElementById('input_diff_name').setAttribute('value', set_info.ChildrenBeatmaps[set_index].DiffName);
+    document.getElementById('input_bpm').setAttribute('value', set_info.ChildrenBeatmaps[set_index].BPM);
+    document.getElementById('input_ar').setAttribute('value', set_info.ChildrenBeatmaps[set_index].AR);
+    document.getElementById('input_cs').setAttribute('value', set_info.ChildrenBeatmaps[set_index].OD);
+    document.getElementById('input_od').setAttribute('value', set_info.ChildrenBeatmaps[set_index].CS);
+    document.getElementById('input_hp').setAttribute('value', set_info.ChildrenBeatmaps[set_index].HP);
 
 }
 
