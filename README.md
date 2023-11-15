@@ -14,6 +14,8 @@ TODO:
 
 <del>figure out how to make a web extension unzip .osz files</del>
 
+figure out how to fill default values and fetch form values
+
 figure out how to make a web extension modify downloaded files
 
 figure out what needs to be modified on .osu files
