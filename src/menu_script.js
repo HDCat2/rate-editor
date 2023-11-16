@@ -150,12 +150,17 @@ async function handleDownload() {
 
     // Handle each file inside the zip
     for (var i = 0; i < arr.length; i++) {
+        // Case for audo file
+        if (RegExp("^audio\.").text(arr[i].filename)) {
+            
+        }
         // Case for hitsounds
         if (RegExp("^.+\.wav$").test(arr[i].filename) || RegExp("^.+\.ogg$").test(arr[i].filename)) {
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
             var arrWriter = new zip.BlobReader(arrData);
             await writer.add(arr[i].filename, arrWriter);
+            continue;
         }
         // Case for .osu files
 
@@ -165,6 +170,7 @@ async function handleDownload() {
             var arrData = await arr[i].getData(arrReader);
             var arrWriter = new zip.BlobReader(arrData);
             await writer.add(arr[i].filename, arrWriter);
+            continue;
         }
     }
 
