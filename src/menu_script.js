@@ -96,7 +96,6 @@ async function get_vals() {
     // Retrieve set attributes using API call
     let response = await fetch("https://api.chimu.moe/v1/set/" + set_id + "/");
     if (response.status != 200) {
-        console.log("f");
         display_error("Failed to retreive beatmapset info");
         return;
     }
@@ -117,9 +116,6 @@ async function get_vals() {
         display_error("Failed to retrieve diff from received beatmap data");
         return;
     }
-
-    console.log(set_info);
-    console.log(set_index);
 
     document.getElementById('input_diff_name').setAttribute('value', set_info.ChildrenBeatmaps[set_index].DiffName);
     document.getElementById('input_bpm').setAttribute('value', set_info.ChildrenBeatmaps[set_index].BPM);
@@ -147,14 +143,30 @@ async function handleDownload() {
     // Unzip and read beatmap data
     const reader = new zip.ZipReader(new zip.BlobReader(osz));
     var arr = await reader.getEntries({filenameEncoding : "utf-8"});
-    console.log(arr);
-    for (var i = 0; i < arr.length; i++) {
-        console.log(arr[i].filename);
-    }
 
-    // Construct files to zip to
+    // Construct zip to send to
     var result = new zip.BlobWriter();
     var writer = new zip.ZipWriter(result);
+
+    // Handle each file inside the zip
+    for (var i = 0; i < arr.length; i++) {
+        // Case for hitsounds
+        if (RegExp("^.+\.wav$").test(arr[i].filename) || RegExp("^.+\.ogg$").test(arr[i].filename)) {
+            var arrReader = new zip.BlobWriter();
+            var arrData = await arr[i].getData(arrReader);
+            var arrWriter = new zip.BlobReader(arrData);
+            await writer.add(arr[i].filename, arrWriter);
+        }
+        // Case for .osu files
+
+        // Case for background
+        if (RegExp("^.+\.jpg$").test(arr[i].filename) || RegExp("^.+\.png$").test(arr[i].filename)) {
+            var arrReader = new zip.BlobWriter();
+            var arrData = await arr[i].getData(arrReader);
+            var arrWriter = new zip.BlobReader(arrData);
+            await writer.add(arr[i].filename, arrWriter);
+        }
+    }
 
     // Download finished zip file
     await writer.close();
@@ -163,7 +175,7 @@ async function handleDownload() {
     const result_fname = set_id + ' ' + set_info.Title + '.osz';
     console.log(result_url);
     console.log(result_fname);
-    //chrome.downloads.download({result_url, result_fname});
+    chrome.downloads.download({url : result_url, filename : "asdkjas.osz"});
 }
 
 async function main() {
