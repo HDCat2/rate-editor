@@ -6,6 +6,9 @@ var set_info;
 var set_index;
 var url;
 
+/*
+Display HTML in the case an error comes up
+*/
 function display_error(error_msg) {
     document.getElementById("root_div").className = "unsupported";
     document.getElementById("root_div").innerHTML = "The extension ran into an error. Please try again by clicking out and back into the extension :c";
@@ -15,11 +18,17 @@ function display_error(error_msg) {
     document.appendChild(error_display);
 }
 
+/*
+Display HTML in the case the popup opens on page that is not a beatmap page
+*/
 function display_unsupported() {
     document.getElementById("root_div").className = "unsupported";
     document.getElementById("root_div").innerHTML = "This extension does not support this webpage :c";
 }
 
+/*
+Display HTML for a beatmap page
+*/
 function display_supported() {
     var root_div = document.getElementById("root_div")
 
@@ -62,8 +71,10 @@ function display_supported() {
     root_div.appendChild(download_button);
 }
 
+/*
+Refill form values back to the default (whatever the indicated map had originally)
+*/
 function fillDefault() {
-    console.log("resetting");
     document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName;
     document.getElementById('input_bpm').value = set_info.ChildrenBeatmaps[set_index].BPM;
     document.getElementById('input_ar').value = set_info.ChildrenBeatmaps[set_index].AR;
@@ -72,6 +83,9 @@ function fillDefault() {
     document.getElementById('input_hp').value = set_info.ChildrenBeatmaps[set_index].HP;
 }
 
+/*
+Retrieve set and diff info from API
+*/
 async function get_vals() {
     // Use regex matching to get IDs of set and diff
     let extract_ids = url.match(match_osu_url);
@@ -122,10 +136,9 @@ async function getCurrentTab() {
     return tab;
 }
 
-async function handleReset() {
-    console.log('lmao');
-}
-
+/*
+Code to fetch requisite beatmpa, modify according to input, and download
+*/
 async function handleDownload() {
     // Fetch zipped beatmap data with API call
     let osz = await fetch("https://api.chimu.moe/v1/download/" + set_id + "/");
@@ -138,6 +151,19 @@ async function handleDownload() {
     for (var i = 0; i < arr.length; i++) {
         console.log(arr[i].filename);
     }
+
+    // Construct files to zip to
+    var result = new zip.BlobWriter();
+    var writer = new zip.ZipWriter(result);
+
+    // Download finished zip file
+    await writer.close();
+    const result_blob = await result.getData();
+    const result_url = URL.createObjectURL(result_blob);
+    const result_fname = set_id + ' ' + set_info.Title + '.osz';
+    console.log(result_url);
+    console.log(result_fname);
+    //chrome.downloads.download({result_url, result_fname});
 }
 
 async function main() {
