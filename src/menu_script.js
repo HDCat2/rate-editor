@@ -5,6 +5,7 @@ var diff_id;
 var set_info;
 var set_index;
 var url;
+var result_fname;
 
 /*
 Display HTML in the case an error comes up
@@ -145,17 +146,17 @@ async function handleDownload() {
     var arr = await reader.getEntries({filenameEncoding : "utf-8"});
 
     // Construct zip to send to
-    var result = new zip.BlobWriter();
+    var result = new zip.BlobWriter({mimeString: 'application/octet-stream'});
     var writer = new zip.ZipWriter(result);
 
     // Handle each file inside the zip
     for (var i = 0; i < arr.length; i++) {
         // Case for audo file
-        if (RegExp("^audio\.").text(arr[i].filename)) {
-            
+        if (RegExp("^audio\.").test(arr[i].filename)) {
+            console.log("lmao");
         }
         // Case for hitsounds
-        if (RegExp("^.+\.wav$").test(arr[i].filename) || RegExp("^.+\.ogg$").test(arr[i].filename)) {
+        else if (RegExp("^.+\.wav$").test(arr[i].filename) || RegExp("^.+\.ogg$").test(arr[i].filename)) {
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
             var arrWriter = new zip.BlobReader(arrData);
@@ -163,28 +164,42 @@ async function handleDownload() {
             continue;
         }
         // Case for .osu files
+        else if (RegExp("^.+\.osu").test(arr[i].filename)) {
+            console.log("lmao");
+        }
 
         // Case for background
-        if (RegExp("^.+\.jpg$").test(arr[i].filename) || RegExp("^.+\.png$").test(arr[i].filename)) {
+        else if (RegExp("^.+\.jpg$").test(arr[i].filename) || RegExp("^.+\.png$").test(arr[i].filename)) {
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
             var arrWriter = new zip.BlobReader(arrData);
             await writer.add(arr[i].filename, arrWriter);
             continue;
         }
+
+        // Case for other files
+        else {
+            console.log("Unsupported file detected: " + arr[i].filename);
+        }
     }
 
     // Download finished zip file
     await writer.close();
-    const result_blob = await result.getData();
+    var result_blob = await result.getData();
+    result_blob = result_blob.slice(0, result_blob.size, "application/octet-stream");
     const result_url = URL.createObjectURL(result_blob);
-    const result_fname = set_id + ' ' + set_info.Title + '.osz';
+    result_fname = set_id + ' ' + set_info.Title + '.osz';
     console.log(result_url);
     console.log(result_fname);
-    chrome.downloads.download({url : result_url, filename : "asdkjas.osz"});
+    chrome.downloads.download({url : result_url, filename : result_fname});
 }
 
 async function main() {
+    await chrome.downloads.onDeterminingFilename.addListener(
+        (downloadItem, suggest) => {
+            suggest({filename: result_fname, conflictAction: "overwrite"});
+        }                     
+    );
     const tab = await getCurrentTab();
     url = tab.url;
 
