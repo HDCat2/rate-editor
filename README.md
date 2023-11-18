@@ -16,8 +16,12 @@ TODO:
 
 <del>figure out how to fill default values and fetch form values</del>
 
+figure out how to change playback rate on .mp3 and .ogg files
+
 figure out how to make a web extension modify downloaded files
 
 figure out what needs to be modified on .osu files
 
 figure out how to make it look good
+
+change readme and make ready for public
