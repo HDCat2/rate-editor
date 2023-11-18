@@ -148,9 +148,29 @@ async function handleDownload() {
     // Construct zip to send to
     var result = new zip.BlobWriter({mimeString: 'application/octet-stream'});
     var writer = new zip.ZipWriter(result);
+    
+    var diffFile;
+    var diffFileSearchSucceeded = false;
+    // Find .osu file which corresponds to current beatmap ID
+    for (let i = 0; i < arr.length; i++) {
+        if (RegExp("^.+\.osu$").test(arr[i].filename)) {
+            var txtReader = new zip.TextWriter();
+            diffFile = await arr[i].getData(txtReader);
+            if (diffFile.includes("BeatmapID:" + diff_id)) {
+                console.log("found " + arr[i].filename);
+                diffFileSearchSucceeded = true;
+                break;
+            }
+        }
+    }
+
+    if (!diffFileSearchSucceeded) {
+        display_error("Failed to find diff in downloaded zip");
+        return;
+    }
 
     // Handle each file inside the zip
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
         // Case for audo file
         if (RegExp("^audio\.").test(arr[i].filename)) {
             console.log("lmao");
