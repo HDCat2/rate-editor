@@ -16,6 +16,8 @@ TODO:
 
 <del>figure out how to fill default values and fetch form values</del>
 
+figure out how to check form values
+
 figure out how to change playback rate on .mp3 and .ogg files
 
 figure out how to make a web extension modify downloaded files

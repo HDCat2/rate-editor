@@ -6,6 +6,7 @@ var set_info;
 var set_index;
 var url;
 var result_fname;
+var audio_fname;
 
 /*
 Display HTML in the case an error comes up
@@ -134,9 +135,17 @@ async function getCurrentTab() {
 }
 
 /*
-Code to fetch requisite beatmpa, modify according to input, and download
+Check if valid values were entered for input fields
+*/
+function verifyFields() {
+    console.log("lmao");
+}
+
+/*
+Code to fetch requisite beatmap, modify according to input, and download
 */
 async function handleDownload() {
+    verifyFields();
     // Fetch zipped beatmap data with API call
     let osz = await fetch("https://api.chimu.moe/v1/download/" + set_id + "/");
     osz = await osz.blob();
@@ -157,10 +166,24 @@ async function handleDownload() {
             var txtReader = new zip.TextWriter();
             diffFile = await arr[i].getData(txtReader);
             if (diffFile.includes("BeatmapID:" + diff_id)) {
-                console.log("found " + arr[i].filename);
                 diffFileSearchSucceeded = true;
+                audio_fname = diffFile.match(RegExp("AudioFilename:\s*(.+)\n"))[1];
+                console.log(audio_fname);
                 break;
             }
+
+            // Alter beatmap characteristics according to input
+            diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
+            diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)\n", "HPDrainRate:" + document.getElementByID("input_hp").value + "\n"));
+            diffFile = diffFile.replace(RegExp("CircleSize:(.+)\n", "CircleSize:" + document.getElementByID("input_cs").value + "\n"));
+            diffFile = diffFile.replace(RegExp("OverallDifficulty:(.+)\n", "OverallDifficulty:" + document.getElementByID("input_od").value + "\n"));
+            diffFile = diffFile.replace(RegExp("ApproachRate:(.+)\n", "ApproachRate:" + document.getElementByID("input_ar").value + "\n"));
+
+
+            // Add modified .osu file to result zip folder
+            var fname = arr[i].filename.match(RegExp("^(.+)\.osu$"))[1];
+            var txtWriter = new zip.TextReader(diffFile);
+            await writer.add(fname + " (edited).osu", txtWriter);
         }
     }
 
@@ -169,7 +192,7 @@ async function handleDownload() {
         return;
     }
 
-    // Handle each file inside the zip
+    // Handle other files inside the zip
     for (let i = 0; i < arr.length; i++) {
         // Case for audo file
         if (RegExp("^audio\.").test(arr[i].filename)) {
