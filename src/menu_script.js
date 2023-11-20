@@ -218,21 +218,22 @@ async function handleDownload() {
             if (diffFile.includes("BeatmapID:" + diff_id)) {
                 diffFileSearchSucceeded = true;
                 audio_fname = diffFile.match(RegExp("AudioFilename:(\s*)(.+)"))[2];
+
+                // Alter beatmap characteristics according to input
+                diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
+                diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)"), "HPDrainRate:" + document.getElementById("input_hp").value);
+                diffFile = diffFile.replace(RegExp("CircleSize:(.+)"), "CircleSize:" + document.getElementById("input_cs").value);
+                diffFile = diffFile.replace(RegExp("OverallDifficulty:(.+)"), "OverallDifficulty:" + document.getElementById("input_od").value);
+                diffFile = diffFile.replace(RegExp("ApproachRate:(.+)"), "ApproachRate:" + document.getElementById("input_ar").value);
+
+                // Add modified .osu file to result zip folder
+                var new_fname = arr[i].filename.match(RegExp("^(.+)\.osu$"))[1];
+                var txtWriter = new zip.TextReader(diffFile);
+                console.log(new_fname);
+                await writer.add(new_fname + " (edited).osu", txtWriter);
+
                 break;
             }
-
-            // Alter beatmap characteristics according to input
-            diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
-            diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)"), "HPDrainRate:" + document.getElementByID("input_hp").value + "\n");
-            diffFile = diffFile.replace(RegExp("CircleSize:(.+)"), "CircleSize:" + document.getElementByID("input_cs").value + "\n");
-            diffFile = diffFile.replace(RegExp("OverallDifficulty:(.+)"), "OverallDifficulty:" + document.getElementByID("input_od").value + "\n");
-            diffFile = diffFile.replace(RegExp("ApproachRate:(.+)"), "ApproachRate:" + document.getElementByID("input_ar").value + "\n");
-
-
-            // Add modified .osu file to result zip folder
-            var new_fname = arr[i].filename.match(RegExp("^(.+)\.osu$"))[1];
-            var txtWriter = new zip.TextReader(diffFile);
-            await writer.add(new_fname + " (edited).osu", txtWriter);
         }
     }
 
@@ -278,9 +279,8 @@ async function handleDownload() {
     result_blob = result_blob.slice(0, result_blob.size, "application/octet-stream");
     const result_url = URL.createObjectURL(result_blob);
     result_fname = set_id + ' ' + set_info.Title + '.osz';
-    console.log(result_url);
-    console.log(result_fname);
     chrome.downloads.download({url : result_url, filename : result_fname});
+    document.getElementById('bottom_text').innerHTML = "Downloaded!";
     return false;
 }
 
