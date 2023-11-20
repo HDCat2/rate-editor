@@ -43,6 +43,7 @@ function display_supported() {
     var input_cs = document.createElement('input');
     var input_od = document.createElement('input');
     var input_hp = document.createElement('input');
+
     input_diff_name.setAttribute('id', 'input_diff_name');
     input_bpm.setAttribute('id', 'input_bpm');
     input_ar.setAttribute('id', 'input_ar');
@@ -50,26 +51,31 @@ function display_supported() {
     input_od.setAttribute('id', 'input_od');
     input_hp.setAttribute('id', 'input_hp');
 
+    input_bpm.setAttribute('type', 'number');
     input_ar.setAttribute('type', 'number');
     input_cs.setAttribute('type', 'number');
     input_od.setAttribute('type', 'number');
     input_hp.setAttribute('type', 'number');
 
+    input_bpm.setAttribute('min', '0.5');
     input_ar.setAttribute('min', '0');
     input_cs.setAttribute('min', '0');
     input_od.setAttribute('min', '0');
     input_hp.setAttribute('min', '0');
 
+    input_bpm.setAttribute('max', '2');
     input_ar.setAttribute('max', '10');
     input_cs.setAttribute('max', '10');
     input_od.setAttribute('max', '10');
     input_hp.setAttribute('max', '10');
 
+    input_bpm.setAttribute('step', '0.1');
     input_ar.setAttribute('step', '0.1');
     input_cs.setAttribute('step', '0.1');
     input_od.setAttribute('step', '0.1');
     input_hp.setAttribute('step', '0.1');
 
+    input_bpm.setAttribute('title', "Input a number between 0.5 and 2.0 inclusive");
     input_ar.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
     input_cs.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
     input_od.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
@@ -107,7 +113,7 @@ Refill form values back to the default (whatever the indicated map had originall
 */
 function fillDefault() {
     document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName;
-    document.getElementById('input_bpm_mult').value = "1.0";
+    document.getElementById('input_bpm').value = "1.0";
     document.getElementById('input_ar').value = set_info.ChildrenBeatmaps[set_index].AR;
     document.getElementById('input_cs').value = set_info.ChildrenBeatmaps[set_index].OD;
     document.getElementById('input_od').value = set_info.ChildrenBeatmaps[set_index].CS;
@@ -148,12 +154,7 @@ async function get_vals() {
         return;
     }
 
-    document.getElementById('input_diff_name').setAttribute('value', set_info.ChildrenBeatmaps[set_index].DiffName);
-    document.getElementById('input_bpm').setAttribute('value', set_info.ChildrenBeatmaps[set_index].BPM);
-    document.getElementById('input_ar').setAttribute('value', set_info.ChildrenBeatmaps[set_index].AR);
-    document.getElementById('input_cs').setAttribute('value', set_info.ChildrenBeatmaps[set_index].OD);
-    document.getElementById('input_od').setAttribute('value', set_info.ChildrenBeatmaps[set_index].CS);
-    document.getElementById('input_hp').setAttribute('value', set_info.ChildrenBeatmaps[set_index].HP);
+    fillDefault();
 
 }
 
@@ -168,6 +169,13 @@ Check if valid values were entered for input fields
 */
 function verifyFields() {
     var n_err = 0;
+    if (document.getElementById('input_diff_name').value == null || document.getElementById('input_diff_name').value == "") {
+        document.getElementById('bottom_text').innerHTML = "Please write a name for your custom diff";
+        return false;
+    }
+    if (isNaN(document.getElementById('input_bpm').value) || Number(document.getElementById('input_bpm').value) < 0.5 ||  Number(document.getElementById('input_bpm').value) > 2.0) {
+        n_err++;
+    }
     if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_ar').value)) {
         n_err++;
     }
@@ -181,7 +189,7 @@ function verifyFields() {
         n_err++;
     }
     if (n_err) {
-        document.getElementById('bottom_text').innerHTML = "At least one of your submitted values is invalid; please ensure that BPM multiplier is between 0.5 and 2.0 and all other submissions are numbers between 0 and 10 with at most 1 decimal place";
+        document.getElementById('bottom_text').innerHTML = "Please ensure that BPM multiplier is between 0.5 and 2.0 and all other submissions are numbers between 0 and 10 with at most 1 decimal place";
         return false;
     }
     document.getElementById('bottom_text').innerHTML = "Downloading .osz...";
@@ -220,6 +228,7 @@ async function handleDownload() {
                 audio_fname = diffFile.match(RegExp("AudioFilename:(\s*)(.+)"))[2];
 
                 // Alter beatmap characteristics according to input
+                diffFile = diffFile.replace(RegExp("Version:(.+)"), "Version:" + document.getElementById("input_diff_name").value);
                 diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
                 diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)"), "HPDrainRate:" + document.getElementById("input_hp").value);
                 diffFile = diffFile.replace(RegExp("CircleSize:(.+)"), "CircleSize:" + document.getElementById("input_cs").value);
@@ -227,11 +236,8 @@ async function handleDownload() {
                 diffFile = diffFile.replace(RegExp("ApproachRate:(.+)"), "ApproachRate:" + document.getElementById("input_ar").value);
 
                 // Add modified .osu file to result zip folder
-                var new_fname = arr[i].filename.match(RegExp("^(.+)\.osu$"))[1];
                 var txtWriter = new zip.TextReader(diffFile);
-                console.log(new_fname);
-                await writer.add(new_fname + " (edited).osu", txtWriter);
-
+                await writer.add(set_info.Artist + " - " + set_info.Title + "(" + set_info.Creator + ") (edited) [" + document.getElementById("input_diff_name").value + "].osu", txtWriter);
                 break;
             }
         }
@@ -246,16 +252,19 @@ async function handleDownload() {
 
     // Handle other files inside the zip
     for (let i = 0; i < arr.length; i++) {
-        // Case for audo file
-        if (RegExp("^audio\.").test(arr[i].filename)) {
+        // Case for audio file
+        if (arr[i].filename == audio_fname) {
             console.log("lmao");
-        }
-        // Case for hitsounds
-        else if (RegExp("^.+\.wav$").test(arr[i].filename) || RegExp("^.+\.ogg$").test(arr[i].filename)) {
+
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
             var arrWriter = new zip.BlobReader(arrData);
             await writer.add(arr[i].filename, arrWriter);
+            continue;
+        }
+
+        // Case for .osu files (all of them get dropped)
+        else if (RegExp("^.+\.osu$").test(arr[i].filename)) {
             continue;
         }
 
@@ -268,7 +277,14 @@ async function handleDownload() {
             continue;
         }
 
-        // All other files get dropped
+        // All other files simply get added
+        else {
+            var arrReader = new zip.BlobWriter();
+            var arrData = await arr[i].getData(arrReader);
+            var arrWriter = new zip.BlobReader(arrData);
+            await writer.add(arr[i].filename, arrWriter);
+            continue;
+        }
     }
 
     document.getElementById('bottom_text').innerHTML = "Downloading modified beatmap!";
