@@ -35,6 +35,7 @@ function display_supported() {
     var root_div = document.getElementById("root_div")
 
     var form = document.createElement('form');
+    form.setAttribute('onsubmit', "return handleDownload()");
 
     var input_diff_name = document.createElement('input');
     var input_bpm = document.createElement('input');
@@ -49,6 +50,31 @@ function display_supported() {
     input_od.setAttribute('id', 'input_od');
     input_hp.setAttribute('id', 'input_hp');
 
+    input_ar.setAttribute('type', 'number');
+    input_cs.setAttribute('type', 'number');
+    input_od.setAttribute('type', 'number');
+    input_hp.setAttribute('type', 'number');
+
+    input_ar.setAttribute('min', '0');
+    input_cs.setAttribute('min', '0');
+    input_od.setAttribute('min', '0');
+    input_hp.setAttribute('min', '0');
+
+    input_ar.setAttribute('max', '10');
+    input_cs.setAttribute('max', '10');
+    input_od.setAttribute('max', '10');
+    input_hp.setAttribute('max', '10');
+
+    input_ar.setAttribute('step', '0.1');
+    input_cs.setAttribute('step', '0.1');
+    input_od.setAttribute('step', '0.1');
+    input_hp.setAttribute('step', '0.1');
+
+    input_ar.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
+    input_cs.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
+    input_od.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
+    input_hp.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
+
     form.appendChild(input_diff_name);
     form.appendChild(input_bpm);
     form.appendChild(input_ar);
@@ -62,15 +88,18 @@ function display_supported() {
     reset_button.addEventListener('click', fillDefault);
 
     var download_button = document.createElement('button');
-    download_button.innerHTML = 'Download!';
+    download_button.innerHTML = 'Download';
     download_button.setAttribute('id', 'download_button');
     download_button.addEventListener('click', handleDownload);
 
-    root_div.setAttribute('title', 'placeholder');
     root_div.className = "supported";
     root_div.appendChild(form);
     root_div.appendChild(reset_button);
     root_div.appendChild(download_button);
+
+    var bottom_text = document.createElement('p');
+    bottom_text.setAttribute('id', 'bottom_text');
+    root_div.appendChild(bottom_text);
 }
 
 /*
@@ -78,7 +107,7 @@ Refill form values back to the default (whatever the indicated map had originall
 */
 function fillDefault() {
     document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName;
-    document.getElementById('input_bpm').value = set_info.ChildrenBeatmaps[set_index].BPM;
+    document.getElementById('input_bpm_mult').value = "1.0";
     document.getElementById('input_ar').value = set_info.ChildrenBeatmaps[set_index].AR;
     document.getElementById('input_cs').value = set_info.ChildrenBeatmaps[set_index].OD;
     document.getElementById('input_od').value = set_info.ChildrenBeatmaps[set_index].CS;
@@ -138,17 +167,38 @@ async function getCurrentTab() {
 Check if valid values were entered for input fields
 */
 function verifyFields() {
-    console.log("lmao");
+    var n_err = 0;
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_ar').value)) {
+        n_err++;
+    }
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_cs').value)) {
+        n_err++;
+    }
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_od').value)) {
+        n_err++;
+    }
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_hp').value)) {
+        n_err++;
+    }
+    if (n_err) {
+        document.getElementById('bottom_text').innerHTML = "At least one of your submitted values is invalid; please ensure that BPM multiplier is between 0.5 and 2.0 and all other submissions are numbers between 0 and 10 with at most 1 decimal place";
+        return false;
+    }
+    document.getElementById('bottom_text').innerHTML = "Downloading .osz...";
+    return true;
 }
 
 /*
 Code to fetch requisite beatmap, modify according to input, and download
 */
 async function handleDownload() {
-    verifyFields();
+    // Check if values are valid
+    if (!verifyFields()) return false;
     // Fetch zipped beatmap data with API call
     let osz = await fetch("https://api.chimu.moe/v1/download/" + set_id + "/");
     osz = await osz.blob();
+
+    document.getElementById('bottom_text').innerHTML = "Finding and editing diff...";
 
     // Unzip and read beatmap data
     const reader = new zip.ZipReader(new zip.BlobReader(osz));
@@ -167,7 +217,8 @@ async function handleDownload() {
             diffFile = await arr[i].getData(txtReader);
             if (diffFile.includes("BeatmapID:" + diff_id)) {
                 diffFileSearchSucceeded = true;
-                audio_fname = diffFile.match(RegExp("AudioFilename:\s*(.+)\n"))[1];
+                console.log(diffFile.match(RegExp("AudioFilename:(\s*)(.+)\n")))
+                audio_fname = diffFile.match(RegExp("AudioFilename:(\s*)(.+)\n"))[2];
                 console.log(audio_fname);
                 break;
             }
@@ -189,8 +240,10 @@ async function handleDownload() {
 
     if (!diffFileSearchSucceeded) {
         display_error("Failed to find diff in downloaded zip");
-        return;
+        return false;
     }
+
+    document.getElementById('bottom_text').innerHTML = "Preparing modified beatmap for download...";
 
     // Handle other files inside the zip
     for (let i = 0; i < arr.length; i++) {
@@ -206,10 +259,6 @@ async function handleDownload() {
             await writer.add(arr[i].filename, arrWriter);
             continue;
         }
-        // Case for .osu files
-        else if (RegExp("^.+\.osu").test(arr[i].filename)) {
-            console.log("lmao");
-        }
 
         // Case for background
         else if (RegExp("^.+\.jpg$").test(arr[i].filename) || RegExp("^.+\.png$").test(arr[i].filename)) {
@@ -220,11 +269,10 @@ async function handleDownload() {
             continue;
         }
 
-        // Case for other files
-        else {
-            console.log("Unsupported file detected: " + arr[i].filename);
-        }
+        // All other files get dropped
     }
+
+    document.getElementById('bottom_text').innerHTML = "Downloading modified beatmap!";
 
     // Download finished zip file
     await writer.close();
@@ -235,14 +283,10 @@ async function handleDownload() {
     console.log(result_url);
     console.log(result_fname);
     chrome.downloads.download({url : result_url, filename : result_fname});
+    return false;
 }
 
 async function main() {
-    await chrome.downloads.onDeterminingFilename.addListener(
-        (downloadItem, suggest) => {
-            suggest({filename: result_fname, conflictAction: "overwrite"});
-        }                     
-    );
     const tab = await getCurrentTab();
     url = tab.url;
 
