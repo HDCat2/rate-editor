@@ -217,24 +217,22 @@ async function handleDownload() {
             diffFile = await arr[i].getData(txtReader);
             if (diffFile.includes("BeatmapID:" + diff_id)) {
                 diffFileSearchSucceeded = true;
-                console.log(diffFile.match(RegExp("AudioFilename:(\s*)(.+)\n")))
-                audio_fname = diffFile.match(RegExp("AudioFilename:(\s*)(.+)\n"))[2];
-                console.log(audio_fname);
+                audio_fname = diffFile.match(RegExp("AudioFilename:(\s*)(.+)"))[2];
                 break;
             }
 
             // Alter beatmap characteristics according to input
             diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
-            diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)\n", "HPDrainRate:" + document.getElementByID("input_hp").value + "\n"));
-            diffFile = diffFile.replace(RegExp("CircleSize:(.+)\n", "CircleSize:" + document.getElementByID("input_cs").value + "\n"));
-            diffFile = diffFile.replace(RegExp("OverallDifficulty:(.+)\n", "OverallDifficulty:" + document.getElementByID("input_od").value + "\n"));
-            diffFile = diffFile.replace(RegExp("ApproachRate:(.+)\n", "ApproachRate:" + document.getElementByID("input_ar").value + "\n"));
+            diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)"), "HPDrainRate:" + document.getElementByID("input_hp").value + "\n");
+            diffFile = diffFile.replace(RegExp("CircleSize:(.+)"), "CircleSize:" + document.getElementByID("input_cs").value + "\n");
+            diffFile = diffFile.replace(RegExp("OverallDifficulty:(.+)"), "OverallDifficulty:" + document.getElementByID("input_od").value + "\n");
+            diffFile = diffFile.replace(RegExp("ApproachRate:(.+)"), "ApproachRate:" + document.getElementByID("input_ar").value + "\n");
 
 
             // Add modified .osu file to result zip folder
-            var fname = arr[i].filename.match(RegExp("^(.+)\.osu$"))[1];
+            var new_fname = arr[i].filename.match(RegExp("^(.+)\.osu$"))[1];
             var txtWriter = new zip.TextReader(diffFile);
-            await writer.add(fname + " (edited).osu", txtWriter);
+            await writer.add(new_fname + " (edited).osu", txtWriter);
         }
     }
 
