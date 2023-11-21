@@ -51,7 +51,7 @@ function display_supported() {
     input_od.setAttribute('id', 'input_od');
     input_hp.setAttribute('id', 'input_hp');
 
-    input_bpm.setAttribute('type', 'number');
+    input_bpm.setAttribute('type', 'range');
     input_ar.setAttribute('type', 'number');
     input_cs.setAttribute('type', 'number');
     input_od.setAttribute('type', 'number');
@@ -63,7 +63,7 @@ function display_supported() {
     input_od.setAttribute('min', '0');
     input_hp.setAttribute('min', '0');
 
-    input_bpm.setAttribute('max', '2');
+    input_bpm.setAttribute('max', '2.0');
     input_ar.setAttribute('max', '10');
     input_cs.setAttribute('max', '10');
     input_od.setAttribute('max', '10');
