@@ -8,6 +8,14 @@ var url;
 var result_fname;
 var audio_fname;
 
+const { createFFmpeg, fetchFile } = FFmpeg;
+
+const ffmpeg = createFFmpeg({
+    corePath: chrome.runtime.getURL("lib/ffmpeg-core.js"),
+    log: true,
+    mainName: 'main'
+});
+
 /*
 Display HTML in the case an error comes up
 */
@@ -225,7 +233,7 @@ async function handleDownload() {
             diffFile = await arr[i].getData(txtReader);
             if (diffFile.includes("BeatmapID:" + diff_id)) {
                 diffFileSearchSucceeded = true;
-                audio_fname = diffFile.match(RegExp("AudioFilename:(\s*)(.+)"))[2];
+                audio_fname = diffFile.match(RegExp("AudioFilename:([ \s]*)(.+)"))[2];
 
                 // Alter beatmap characteristics according to input
                 diffFile = diffFile.replace(RegExp("Version:(.+)"), "Version:" + document.getElementById("input_diff_name").value);
@@ -254,7 +262,10 @@ async function handleDownload() {
     for (let i = 0; i < arr.length; i++) {
         // Case for audio file
         if (arr[i].filename == audio_fname) {
-            console.log("lmao");
+
+            await ffmpeg.load();
+
+            await ffmpeg.exit();
 
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
@@ -268,7 +279,7 @@ async function handleDownload() {
             continue;
         }
 
-        // Case for background
+        // Case for background (currently no background switching implemented yet)
         else if (RegExp("^.+\.jpg$").test(arr[i].filename) || RegExp("^.+\.png$").test(arr[i].filename)) {
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
