@@ -262,14 +262,19 @@ async function handleDownload() {
     for (let i = 0; i < arr.length; i++) {
         // Case for audio file
         if (arr[i].filename == audio_fname) {
+            var file_ext = audio_fname.match(RegExp("(\..+)$"))[1];
+            var arrReader = new zip.BlobWriter();
+            var arrData = await arr[i].getData(arrReader);
+            var fileData = new File([arrData], "test1829381" + file_ext);
 
             await ffmpeg.load();
 
-            await ffmpeg.exit();
+            await ffmpeg.FS('writeFile', "test1829381" + file_ext, await fetchFile(fileData));
+            await ffmpeg.run(...['-i', "test1829381" + file_ext, '-filter:a', 'atempo=' + document.getElementById("input_bpm").value, '-vn', audio_fname]);
 
-            var arrReader = new zip.BlobWriter();
-            var arrData = await arr[i].getData(arrReader);
-            var arrWriter = new zip.BlobReader(arrData);
+            var outBlob = new Blob([ffmpeg.FS('readFile', audio_fname).buffer]);
+            await ffmpeg.exit();
+            var arrWriter = new zip.BlobReader(outBlob);
             await writer.add(arr[i].filename, arrWriter);
             continue;
         }
