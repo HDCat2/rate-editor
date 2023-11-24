@@ -123,8 +123,8 @@ function fillDefault() {
     document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName;
     document.getElementById('input_bpm').value = "1.0";
     document.getElementById('input_ar').value = set_info.ChildrenBeatmaps[set_index].AR;
-    document.getElementById('input_cs').value = set_info.ChildrenBeatmaps[set_index].OD;
-    document.getElementById('input_od').value = set_info.ChildrenBeatmaps[set_index].CS;
+    document.getElementById('input_cs').value = set_info.ChildrenBeatmaps[set_index].CS;
+    document.getElementById('input_od').value = set_info.ChildrenBeatmaps[set_index].OD;
     document.getElementById('input_hp').value = set_info.ChildrenBeatmaps[set_index].HP;
 }
 
@@ -205,6 +205,41 @@ function verifyFields() {
 }
 
 /*
+Modify found timing point according to speed
+*/
+function editTimingPoint(match, p1, offset, string) {
+    var vals = p1.split(',');
+    vals[0] = String(Math.round(Number(vals[0])/Number(document.getElementById('input_bpm').value)));
+    var bpm = Number(vals[1]);
+    if (bpm > 0) {
+        vals[1] = String(bpm/Number(document.getElementById('input_bpm').value));
+    }
+    return vals.join(',');
+}
+
+/*
+Modify found hitcircle according to new speed
+*/
+function editCircle(match, p1, offset, string) {
+    var vals = p1.split(',');
+    vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
+    return vals.join(',');
+}
+
+/*
+Modify found slider according to new speed
+*/
+function editSlider(match, p1, offset, string) {
+    var vals = p1.split(',');
+    vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
+    return vals.join(',');
+}
+
+function editSliderMultiplier(match, p1, offset, string) {
+    return "SliderTickRate:" + String(Number(p1) * Number(document.getElementById('input_bpm').value));
+}
+
+/*
 Code to fetch requisite beatmap, modify according to input, and download
 */
 async function handleDownload() {
@@ -236,12 +271,18 @@ async function handleDownload() {
                 audio_fname = diffFile.match(RegExp("AudioFilename:([ \s]*)(.+)"))[2];
 
                 // Alter beatmap characteristics according to input
+                diffFile = diffFile.replace(RegExp("SliderTickRate:(.+)"), editSliderMultiplier);
                 diffFile = diffFile.replace(RegExp("Version:(.+)"), "Version:" + document.getElementById("input_diff_name").value);
                 diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
                 diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)"), "HPDrainRate:" + document.getElementById("input_hp").value);
                 diffFile = diffFile.replace(RegExp("CircleSize:(.+)"), "CircleSize:" + document.getElementById("input_cs").value);
                 diffFile = diffFile.replace(RegExp("OverallDifficulty:(.+)"), "OverallDifficulty:" + document.getElementById("input_od").value);
                 diffFile = diffFile.replace(RegExp("ApproachRate:(.+)"), "ApproachRate:" + document.getElementById("input_ar").value);
+
+                // Alter beatmap timing points & hit objects according to input bpm
+                diffFile = diffFile.replaceAll(/(^[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+$)/gm, editTimingPoint);
+                diffFile = diffFile.replaceAll(/(^[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+$)/gm, editCircle);
+                diffFile = diffFile.replaceAll(/(^[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+$)/gm, editSlider);
 
                 // Add modified .osu file to result zip folder
                 var txtWriter = new zip.TextReader(diffFile);

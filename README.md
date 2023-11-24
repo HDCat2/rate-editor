@@ -18,11 +18,13 @@ TODO:
 
 <del>figure out how to check form values</del>
 
-figure out how to change playback rate on .mp3 and .ogg files
+<del>figure out how to change playback rate on .mp3 and .ogg files</del>
 
-figure out how to make a web extension modify downloaded files
+<del>figure out how to make a web extension modify downloaded files</del>
 
-figure out what needs to be modified on .osu files
+<del>figure out what needs to be modified on .osu files</del>
+
+successfully produce modified beatmaps
 
 figure out how to make it look good
 
