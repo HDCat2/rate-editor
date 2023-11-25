@@ -235,8 +235,22 @@ function editSlider(match, p1, offset, string) {
     return vals.join(',');
 }
 
-function editSliderMultiplier(match, p1, offset, string) {
-    return "SliderTickRate:" + String(Number(p1) * Number(document.getElementById('input_bpm').value));
+function editPreviewTime(match, p1, offset, string) {
+    return "PreviewTime: " + String(Math.round(Number(p1) / Number(document.getElementById('input_bpm').value)));
+}
+
+function editBreakTiming(math, p1, offset, string) {
+    var vals = p1.split(',');
+    vals[1] = String(Math.round(Number(vals[1])/Number(document.getElementById('input_bpm').value)));
+    vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
+    return vals.join(',');
+}
+
+function editSpinner(match, p1, offset, string) {
+    var vals = p1.split(',');
+    vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
+    vals[5] = String(Math.round(Number(vals[5])/Number(document.getElementById('input_bpm').value)));
+    return vals.join(',');
 }
 
 /*
@@ -271,7 +285,7 @@ async function handleDownload() {
                 audio_fname = diffFile.match(RegExp("AudioFilename:([ \s]*)(.+)"))[2];
 
                 // Alter beatmap characteristics according to input
-                diffFile = diffFile.replace(RegExp("SliderTickRate:(.+)"), editSliderMultiplier);
+                diffFile = diffFile.replace(RegExp("PreviewTime:[ \s]*(.+)"), editPreviewTime);
                 diffFile = diffFile.replace(RegExp("Version:(.+)"), "Version:" + document.getElementById("input_diff_name").value);
                 diffFile = diffFile.replace(RegExp("BeatmapID:[0-9]+"), "BeatmapID:0"); // Turn beatmap to unsubmitted
                 diffFile = diffFile.replace(RegExp("HPDrainRate:(.+)"), "HPDrainRate:" + document.getElementById("input_hp").value);
@@ -281,8 +295,10 @@ async function handleDownload() {
 
                 // Alter beatmap timing points & hit objects according to input bpm
                 diffFile = diffFile.replaceAll(/(^[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+$)/gm, editTimingPoint);
-                diffFile = diffFile.replaceAll(/(^[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+,[-:\.0-9]+$)/gm, editCircle);
-                diffFile = diffFile.replaceAll(/(^[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+$)/gm, editSlider);
+                diffFile = diffFile.replaceAll(/(^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[:0-9]+$)/gm, editCircle);
+                diffFile = diffFile.replaceAll(/(^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[:0-9]+$)/gm, editSpinner);
+                diffFile = diffFile.replaceAll(/(^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[-BCLP|:\.0-9]+,[0-9]+,[\.0-9]+,[|0-9]+,[:|0-9]+,[:0-9]+$)/gm, editSlider);
+                diffFile = diffFile.replaceAll(/(^2,[0-9]+,[0-9]+$)/gm, editBreakTiming);
 
                 // Add modified .osu file to result zip folder
                 var txtWriter = new zip.TextReader(diffFile);

@@ -24,7 +24,7 @@ TODO:
 
 <del>figure out what needs to be modified on .osu files</del>
 
-successfully produce modified beatmaps
+<del>successfully produce modified beatmaps</del>
 
 figure out how to make it look good
 
