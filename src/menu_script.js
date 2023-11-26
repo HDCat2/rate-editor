@@ -21,19 +21,7 @@ Display HTML in the case an error comes up
 */
 function display_error(error_msg) {
     document.getElementById("root_div").className = "unsupported";
-    document.getElementById("root_div").innerHTML = "The extension ran into an error. Please try again by clicking out and back into the extension :c";
-    var error_display = document.createElement('p');
-    error_display.style.fontSize = 'x-small';
-    error_display.innerHTML = error_msg;
-    document.appendChild(error_display);
-}
-
-/*
-Display HTML in the case the popup opens on page that is not a beatmap page
-*/
-function display_unsupported() {
-    document.getElementById("root_div").className = "unsupported";
-    document.getElementById("root_div").innerHTML = "This extension does not support this webpage :c";
+    document.getElementById("root_div").innerHTML = error_msg;
 }
 
 /*
@@ -43,7 +31,38 @@ function display_supported() {
     var root_div = document.getElementById("root_div")
 
     var form = document.createElement('form');
+    form.setAttribute('id', 'popup_form');
     form.setAttribute('onsubmit', "return handleDownload()");
+
+    var input_diff_div = document.createElement('div');
+    var input_diff_label = document.createElement('label');
+    input_diff_label.setAttribute('for', 'input_diff_name');
+    input_diff_label.innerHTML = 'Name';
+
+    var input_bpm_div = document.createElement('div');
+    var input_bpm_label = document.createElement('label');
+    input_bpm_label.setAttribute('for', 'input_bpm');
+    input_bpm_label.innerHTML = 'BPM';
+
+    var input_ar_div = document.createElement('div');
+    var input_ar_label = document.createElement('label');
+    input_ar_label.setAttribute('for', 'input_ar');
+    input_ar_label.innerHTML = 'AR';
+
+    var input_cs_div = document.createElement('div');
+    var input_cs_label = document.createElement('label');
+    input_cs_label.setAttribute('for', 'input_cs');
+    input_cs_label.innerHTML = 'CS';
+
+    var input_od_div = document.createElement('div');
+    var input_od_label = document.createElement('label');
+    input_od_label.setAttribute('for', 'input_od');
+    input_od_label.innerHTML = 'OD';
+
+    var input_hp_div = document.createElement('div');
+    var input_hp_label = document.createElement('label');
+    input_hp_label.setAttribute('for', 'input_hp');
+    input_hp_label.innerHTML = 'HP';
 
     var input_diff_name = document.createElement('input');
     var input_bpm = document.createElement('input');
@@ -51,6 +70,20 @@ function display_supported() {
     var input_cs = document.createElement('input');
     var input_od = document.createElement('input');
     var input_hp = document.createElement('input');
+
+    input_diff_div.setAttribute('class', 'column');
+    input_bpm_div.setAttribute('class', 'column');
+    input_ar_div.setAttribute('class', 'column');
+    input_cs_div.setAttribute('class', 'column');
+    input_od_div.setAttribute('class', 'column');
+    input_hp_div.setAttribute('class', 'column');
+
+    input_diff_label.setAttribute('class', 'characteristic');
+    input_bpm_label.setAttribute('class', 'characteristic');
+    input_ar_label.setAttribute('class', 'characteristic');
+    input_cs_label.setAttribute('class', 'characteristic');
+    input_od_label.setAttribute('class', 'characteristic');
+    input_hp_label.setAttribute('class', 'characteristic');
 
     input_diff_name.setAttribute('id', 'input_diff_name');
     input_bpm.setAttribute('id', 'input_bpm');
@@ -89,12 +122,38 @@ function display_supported() {
     input_od.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
     input_hp.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
 
-    form.appendChild(input_diff_name);
-    form.appendChild(input_bpm);
-    form.appendChild(input_ar);
-    form.appendChild(input_cs);
-    form.appendChild(input_od);
-    form.appendChild(input_hp);
+    input_diff_name.setAttribute('class', 'characteristic');
+    input_bpm.setAttribute('class', 'characteristic');
+    input_ar.setAttribute('class', 'characteristic');
+    input_cs.setAttribute('class', 'characteristic');
+    input_od.setAttribute('class', 'characteristic');
+    input_hp.setAttribute('class', 'characteristic');
+
+
+    input_diff_div.appendChild(input_diff_label);
+    input_diff_div.appendChild(input_diff_name);
+
+    input_bpm_div.appendChild(input_bpm_label);
+    input_bpm_div.appendChild(input_bpm);
+
+    input_ar_div.appendChild(input_ar_label);
+    input_ar_div.appendChild(input_ar);
+
+    input_cs_div.appendChild(input_cs_label);
+    input_cs_div.appendChild(input_cs);
+
+    input_od_div.appendChild(input_od_label);
+    input_od_div.appendChild(input_od);
+
+    input_hp_div.appendChild(input_hp_label);
+    input_hp_div.appendChild(input_hp);
+
+    form.appendChild(input_diff_div);
+    form.appendChild(input_bpm_div);
+    form.appendChild(input_ar_div);
+    form.appendChild(input_cs_div);
+    form.appendChild(input_od_div);
+    form.appendChild(input_hp_div);
 
     var reset_button = document.createElement('button');
     reset_button.innerHTML = 'Reset Selection';
@@ -120,7 +179,7 @@ function display_supported() {
 Refill form values back to the default (whatever the indicated map had originally)
 */
 function fillDefault() {
-    document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName;
+    document.getElementById('input_diff_name').value = set_info.ChildrenBeatmaps[set_index].DiffName + " (edited)";
     document.getElementById('input_bpm').value = "1.0";
     document.getElementById('input_ar').value = set_info.ChildrenBeatmaps[set_index].AR;
     document.getElementById('input_cs').value = set_info.ChildrenBeatmaps[set_index].CS;
@@ -141,7 +200,7 @@ async function get_vals() {
     // Retrieve set attributes using API call
     let response = await fetch("https://api.chimu.moe/v1/set/" + set_id + "/");
     if (response.status != 200) {
-        display_error("Failed to retreive beatmapset info");
+        display_error("Failed to retrieve beatmapset info. Please try again by clicking in and out of the popup.");
         return;
     }
 
@@ -176,31 +235,30 @@ async function getCurrentTab() {
 Check if valid values were entered for input fields
 */
 function verifyFields() {
-    var n_err = 0;
     if (document.getElementById('input_diff_name').value == null || document.getElementById('input_diff_name').value == "") {
         document.getElementById('bottom_text').innerHTML = "Please write a name for your custom diff";
         return false;
     }
     if (isNaN(document.getElementById('input_bpm').value) || Number(document.getElementById('input_bpm').value) < 0.5 ||  Number(document.getElementById('input_bpm').value) > 2.0) {
-        n_err++;
-    }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_ar').value)) {
-        n_err++;
-    }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_cs').value)) {
-        n_err++;
-    }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_od').value)) {
-        n_err++;
-    }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_hp').value)) {
-        n_err++;
-    }
-    if (n_err) {
-        document.getElementById('bottom_text').innerHTML = "Please ensure that BPM multiplier is between 0.5 and 2.0 and all other submissions are numbers between 0 and 10 with at most 1 decimal place";
+        document.getElementById('bottom_text').innerHTML = "Please ensure that the BPM multiplier is between 0.5 and 2.0";
         return false;
     }
-    document.getElementById('bottom_text').innerHTML = "Downloading .osz...";
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_ar').value)) {
+        document.getElementById('bottom_text').innerHTML = "AR must be a decimal between 0 and 10 to at most 1 decimal place";
+        return false;
+    }
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_cs').value)) {
+        document.getElementById('bottom_text').innerHTML = "CS must be a decimal between 0 and 10 to at most 1 decimal place";
+        return false;
+    }
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_od').value)) {
+        document.getElementById('bottom_text').innerHTML = "OD must be a decimal between 0 and 10 to at most 1 decimal place";
+        return false;
+    }
+    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_hp').value)) {
+        document.getElementById('bottom_text').innerHTML = "HP must be a decimal between 0 and 10 to at most 1 decimal place";
+        return false;
+    }
     return true;
 }
 
@@ -259,11 +317,14 @@ Code to fetch requisite beatmap, modify according to input, and download
 async function handleDownload() {
     // Check if values are valid
     if (!verifyFields()) return false;
+
+    document.getElementById('bottom_text').innerHTML = "Downloading .osz...";
+
     // Fetch zipped beatmap data with API call
     let osz = await fetch("https://api.chimu.moe/v1/download/" + set_id + "/");
     osz = await osz.blob();
 
-    document.getElementById('bottom_text').innerHTML = "Finding and editing diff...";
+    document.getElementById('bottom_text').innerHTML = "Creating custom .osu file...";
 
     // Unzip and read beatmap data
     const reader = new zip.ZipReader(new zip.BlobReader(osz));
@@ -313,7 +374,7 @@ async function handleDownload() {
         return false;
     }
 
-    document.getElementById('bottom_text').innerHTML = "Preparing modified beatmap for download...";
+    document.getElementById('bottom_text').innerHTML = "Modifying audio file...";
 
     // Handle other files inside the zip
     for (let i = 0; i < arr.length; i++) {
@@ -322,6 +383,13 @@ async function handleDownload() {
             var file_ext = audio_fname.match(RegExp("(\..+)$"))[1];
             var arrReader = new zip.BlobWriter();
             var arrData = await arr[i].getData(arrReader);
+
+            if (Number(document.getElementById('input_bpm').value) == 1) {
+                var arrWriter = new zip.BlobReader(arrData);
+                await writer.add(arr[i].filename, arrWriter);
+                continue;
+            }
+
             var fileData = new File([arrData], "test1829381" + file_ext);
 
             await ffmpeg.load();
@@ -378,10 +446,15 @@ async function main() {
     url = tab.url;
 
     if (match_osu_url.test(url)) {
-        display_supported();
-        await get_vals();
+        if (url.match(match_osu_url)[2] == "osu") {
+            display_supported();
+            await get_vals();
+        }
+        else {
+            display_error("This extension only supports std gamemode :c")
+        }
     } else {
-        display_unsupported();
+        display_error("This extension does not support this webpage :c");
     }
 }
 

@@ -20,10 +20,35 @@ div.supported {
     margin: auto;
     font-family: "Segoe UI", sans-serif;
     font-size: 20px;
-    text-align: center;
+    text-align: left;
     color: white;
+}
+
+div.row {
+    width: 100%;
+    display: block;
+}
+
+div.column {
+    width: 100%;
+    display: inline-block;
+}
+
+#popup_form {
+    width: 100%;
 }
 
 body {
     margin: 0px !important;
+}
+
+label.characteristic {
+    width: 20%;
+    float: left;
+    font-size: 0.75em;
+}
+
+input.characteristic {
+    width: 40%;
+    float: left;
 }
