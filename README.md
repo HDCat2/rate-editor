@@ -26,6 +26,6 @@ TODO:
 
 <del>successfully produce modified beatmaps</del>
 
-figure out how to make it look good
+<del>figure out how to make it look good</del>
 
 change readme and make ready for public

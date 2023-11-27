@@ -324,6 +324,8 @@ async function handleDownload() {
     // Check if values are valid
     if (!verifyFields()) return false;
 
+    document.getElementById('download_button').disabled = true;
+
     document.getElementById('bottom_text').innerHTML = "Downloading .osz...";
 
     // Fetch zipped beatmap data with API call
@@ -377,6 +379,7 @@ async function handleDownload() {
 
     if (!diffFileSearchSucceeded) {
         display_error("Failed to find diff in downloaded zip");
+        document.getElementById('download_button').disabled = false;
         return false;
     }
 
@@ -444,6 +447,7 @@ async function handleDownload() {
     result_fname = set_id + ' ' + set_info.Title + '.osz';
     chrome.downloads.download({url : result_url, filename : result_fname});
     document.getElementById('bottom_text').innerHTML = "Downloaded!";
+    document.getElementById('download_button').disabled = false;
     return false;
 }
 
