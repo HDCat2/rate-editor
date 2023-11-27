@@ -117,8 +117,8 @@ function display_supported() {
     input_diff_div.appendChild(input_diff_name);
 
     input_bpm_div.appendChild(input_bpm_label);
-    input_bpm_div.appendChild(input_bpm);
     input_bpm_div.appendChild(input_bpm_display);
+    input_bpm_div.appendChild(input_bpm);
 
     input_ar_div.appendChild(input_ar_label);
     input_ar_div.appendChild(input_ar);
@@ -159,8 +159,6 @@ function display_supported() {
     ext_info.innerHTML = "Edit the beatmap characteristics below. Click 'download' to receive the edited beatmap. The edited beatmap can be put into osu! by double-clicking like all other downloaded beatmaps."
     ext_info.setAttribute('class', 'info');
 
-    input_bpm_label.setAttribute('style', 'border-radius: 6px 6px 6px 6px');
-
     root_div.appendChild(title_header);
     root_div.appendChild(document.createElement('hr'));
     root_div.appendChild(ext_info);
@@ -180,6 +178,7 @@ function display_supported() {
     document.getElementById('input_cs').setAttribute("style", "width: 94px");
     document.getElementById('input_od').setAttribute("style", "width: 94px");
     document.getElementById('input_hp').setAttribute("style", "width: 94px");
+    document.getElementById('input_bpm').setAttribute("style", "width: 188px");
 }
 
 /*
