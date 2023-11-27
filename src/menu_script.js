@@ -29,39 +29,34 @@ Display HTML for a beatmap page
 */
 function display_supported() {
     var root_div = document.getElementById("root_div")
+    root_div.className = "supported";
 
     var form = document.createElement('form');
     form.setAttribute('id', 'popup_form');
     form.setAttribute('onsubmit', "return handleDownload()");
 
     var input_diff_div = document.createElement('div');
-    var input_diff_label = document.createElement('label');
-    input_diff_label.setAttribute('for', 'input_diff_name');
+    var input_diff_label = document.createElement('span');
     input_diff_label.innerHTML = 'Name';
 
     var input_bpm_div = document.createElement('div');
-    var input_bpm_label = document.createElement('label');
-    input_bpm_label.setAttribute('for', 'input_bpm');
+    var input_bpm_label = document.createElement('span');
     input_bpm_label.innerHTML = 'BPM';
 
     var input_ar_div = document.createElement('div');
-    var input_ar_label = document.createElement('label');
-    input_ar_label.setAttribute('for', 'input_ar');
+    var input_ar_label = document.createElement('span');
     input_ar_label.innerHTML = 'AR';
 
     var input_cs_div = document.createElement('div');
-    var input_cs_label = document.createElement('label');
-    input_cs_label.setAttribute('for', 'input_cs');
+    var input_cs_label = document.createElement('span');
     input_cs_label.innerHTML = 'CS';
 
     var input_od_div = document.createElement('div');
-    var input_od_label = document.createElement('label');
-    input_od_label.setAttribute('for', 'input_od');
+    var input_od_label = document.createElement('span');
     input_od_label.innerHTML = 'OD';
 
     var input_hp_div = document.createElement('div');
-    var input_hp_label = document.createElement('label');
-    input_hp_label.setAttribute('for', 'input_hp');
+    var input_hp_label = document.createElement('span');
     input_hp_label.innerHTML = 'HP';
 
     var input_diff_name = document.createElement('input');
@@ -71,19 +66,12 @@ function display_supported() {
     var input_od = document.createElement('input');
     var input_hp = document.createElement('input');
 
-    input_diff_div.setAttribute('class', 'column');
-    input_bpm_div.setAttribute('class', 'column');
-    input_ar_div.setAttribute('class', 'column');
-    input_cs_div.setAttribute('class', 'column');
-    input_od_div.setAttribute('class', 'column');
-    input_hp_div.setAttribute('class', 'column');
-
-    input_diff_label.setAttribute('class', 'characteristic');
-    input_bpm_label.setAttribute('class', 'characteristic');
-    input_ar_label.setAttribute('class', 'characteristic');
-    input_cs_label.setAttribute('class', 'characteristic');
-    input_od_label.setAttribute('class', 'characteristic');
-    input_hp_label.setAttribute('class', 'characteristic');
+    input_diff_div.setAttribute('class', 'form-group');
+    input_bpm_div.setAttribute('class', 'form-group');
+    input_ar_div.setAttribute('class', 'form-group');
+    input_cs_div.setAttribute('class', 'form-group');
+    input_od_div.setAttribute('class', 'form-group');
+    input_hp_div.setAttribute('class', 'form-group');
 
     input_diff_name.setAttribute('id', 'input_diff_name');
     input_bpm.setAttribute('id', 'input_bpm');
@@ -99,16 +87,7 @@ function display_supported() {
     input_hp.setAttribute('type', 'number');
 
     input_bpm.setAttribute('min', '0.5');
-    input_ar.setAttribute('min', '0');
-    input_cs.setAttribute('min', '0');
-    input_od.setAttribute('min', '0');
-    input_hp.setAttribute('min', '0');
-
     input_bpm.setAttribute('max', '2.0');
-    input_ar.setAttribute('max', '10');
-    input_cs.setAttribute('max', '10');
-    input_od.setAttribute('max', '10');
-    input_hp.setAttribute('max', '10');
 
     input_bpm.setAttribute('step', '0.1');
     input_ar.setAttribute('step', '0.1');
@@ -117,24 +96,29 @@ function display_supported() {
     input_hp.setAttribute('step', '0.1');
 
     input_bpm.setAttribute('title', "Input a number between 0.5 and 2.0 inclusive");
-    input_ar.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
-    input_cs.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
-    input_od.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
-    input_hp.setAttribute('title', "Input a number between 0 and 10 inclusive, to at most 1 decimal place");
+    input_ar.setAttribute('title', "Input a number between 0 and 10 inclusive, up to 1 decimal place");
+    input_cs.setAttribute('title', "Input a number between 0 and 10 inclusive, up to 1 decimal place");
+    input_od.setAttribute('title', "Input a number between 0 and 10 inclusive, up to 1 decimal place");
+    input_hp.setAttribute('title', "Input a number between 0 and 10 inclusive, up to 1 decimal place");
 
-    input_diff_name.setAttribute('class', 'characteristic');
-    input_bpm.setAttribute('class', 'characteristic');
-    input_ar.setAttribute('class', 'characteristic');
-    input_cs.setAttribute('class', 'characteristic');
-    input_od.setAttribute('class', 'characteristic');
-    input_hp.setAttribute('class', 'characteristic');
-
+    var input_bpm_display = document.createElement('output');
+    input_bpm_display.setAttribute('id', 'input_bpm_display');
+    input_bpm_display.value = 'x1.0';
+    input_bpm.oninput = function() {
+        if (/^[0-9]$/.test(input_bpm.value)) {
+            document.getElementById('input_bpm_display').value = 'x' + input_bpm.value + '.0';
+        }
+        else {
+            document.getElementById('input_bpm_display').value = 'x' + input_bpm.value;
+        }
+    }
 
     input_diff_div.appendChild(input_diff_label);
     input_diff_div.appendChild(input_diff_name);
 
     input_bpm_div.appendChild(input_bpm_label);
     input_bpm_div.appendChild(input_bpm);
+    input_bpm_div.appendChild(input_bpm_display);
 
     input_ar_div.appendChild(input_ar_label);
     input_ar_div.appendChild(input_ar);
@@ -149,30 +133,53 @@ function display_supported() {
     input_hp_div.appendChild(input_hp);
 
     form.appendChild(input_diff_div);
-    form.appendChild(input_bpm_div);
     form.appendChild(input_ar_div);
     form.appendChild(input_cs_div);
     form.appendChild(input_od_div);
     form.appendChild(input_hp_div);
+    form.appendChild(input_bpm_div);
 
     var reset_button = document.createElement('button');
-    reset_button.innerHTML = 'Reset Selection';
+    reset_button.innerHTML = 'Reset Values';
     reset_button.setAttribute('id', 'reset_button');
+    reset_button.setAttribute('class', 'bn5');
     reset_button.addEventListener('click', fillDefault);
 
     var download_button = document.createElement('button');
     download_button.innerHTML = 'Download';
     download_button.setAttribute('id', 'download_button');
+    download_button.setAttribute('class', 'bn5');
     download_button.addEventListener('click', handleDownload);
 
-    root_div.className = "supported";
+    var title_header = document.createElement('p');
+    title_header.setAttribute('class', 'title_header');
+    title_header.innerHTML = 'Create New Beatmap Difficulty'
+
+    var ext_info = document.createElement('p');
+    ext_info.innerHTML = "Edit the beatmap characteristics below. Click 'download' to receive the edited beatmap. The edited beatmap can be put into osu! by double-clicking like all other downloaded beatmaps."
+    ext_info.setAttribute('class', 'info');
+
+    input_bpm_label.setAttribute('style', 'border-radius: 6px 6px 6px 6px');
+
+    root_div.appendChild(title_header);
+    root_div.appendChild(document.createElement('hr'));
+    root_div.appendChild(ext_info);
+    root_div.appendChild(document.createElement('hr'));
     root_div.appendChild(form);
+    root_div.appendChild(document.createElement('hr'));
     root_div.appendChild(reset_button);
     root_div.appendChild(download_button);
 
     var bottom_text = document.createElement('p');
     bottom_text.setAttribute('id', 'bottom_text');
     root_div.appendChild(bottom_text);
+
+    // Because editing width in CSS sheet doesn't work
+    document.getElementById('input_diff_name').setAttribute("style", "width: 244px");
+    document.getElementById('input_ar').setAttribute("style", "width: 94px");
+    document.getElementById('input_cs').setAttribute("style", "width: 94px");
+    document.getElementById('input_od').setAttribute("style", "width: 94px");
+    document.getElementById('input_hp').setAttribute("style", "width: 94px");
 }
 
 /*
@@ -240,23 +247,23 @@ function verifyFields() {
         return false;
     }
     if (isNaN(document.getElementById('input_bpm').value) || Number(document.getElementById('input_bpm').value) < 0.5 ||  Number(document.getElementById('input_bpm').value) > 2.0) {
-        document.getElementById('bottom_text').innerHTML = "Please ensure that the BPM multiplier is between 0.5 and 2.0";
+        document.getElementById('bottom_text').innerHTML = "BPM multiplier must be between 0.5 and 2.0";
         return false;
     }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_ar').value)) {
-        document.getElementById('bottom_text').innerHTML = "AR must be a decimal between 0 and 10 to at most 1 decimal place";
+    if (!/^(10|10\.0|[0-9]\.[0-9]|[0-9])$/gm.test(document.getElementById('input_ar').value)) {
+        document.getElementById('bottom_text').innerHTML = "AR must be a number between 0 and 10 to up to 1 decimal place";
         return false;
     }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_cs').value)) {
-        document.getElementById('bottom_text').innerHTML = "CS must be a decimal between 0 and 10 to at most 1 decimal place";
+    if (!/^(10|10\.0|[0-9]\.[0-9]|[0-9])$/gm.test(document.getElementById('input_cs').value)) {
+        document.getElementById('bottom_text').innerHTML = "CS must be a number between 0 and 10 to up to 1 decimal place";
         return false;
     }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_od').value)) {
-        document.getElementById('bottom_text').innerHTML = "OD must be a decimal between 0 and 10 to at most 1 decimal place";
+    if (!/^(10|10\.0|[0-9]\.[0-9]|[0-9])$/gm.test(document.getElementById('input_od').value)) {
+        document.getElementById('bottom_text').innerHTML = "OD must be a number between 0 and 10 to up to 1 decimal place";
         return false;
     }
-    if (!RegExp("^(10|10\.0|[0-9]\.[0-9]|[0-9])$").test(document.getElementById('input_hp').value)) {
-        document.getElementById('bottom_text').innerHTML = "HP must be a decimal between 0 and 10 to at most 1 decimal place";
+    if (!/^(10|10\.0|[0-9]\.[0-9]|[0-9])$/gm.test(document.getElementById('input_hp').value)) {
+        document.getElementById('bottom_text').innerHTML = "HP must be a number between 0 and 10 to up to 1 decimal place";
         return false;
     }
     return true;
