@@ -87,7 +87,16 @@ function display_supported() {
     input_hp.setAttribute('type', 'number');
 
     input_bpm.setAttribute('min', '0.5');
+    input_ar.setAttribute('min', '0');
+    input_cs.setAttribute('min', '0');
+    input_od.setAttribute('min', '0');
+    input_hp.setAttribute('min', '0');
+
     input_bpm.setAttribute('max', '2.0');
+    input_ar.setAttribute('max', '10');
+    input_cs.setAttribute('max', '10');
+    input_od.setAttribute('max', '10');
+    input_hp.setAttribute('max', '10');
 
     input_bpm.setAttribute('step', '0.1');
     input_ar.setAttribute('step', '0.1');
