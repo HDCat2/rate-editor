@@ -15,13 +15,13 @@ osu! Rate Editor is a Google Chrome web extension made for quick, easy, and conv
 ```
 git clone https://github.com/HDCat2/rate-editor.git
 ```
-2. On Google Chrome, navigate to chrome://extensions. On the top right, click 'Load Unpacked'.
+2. On Google Chrome, navigate to the [extensions page](chrome://extensions). On the top right, click 'Load Unpacked'.
 
 3. There will be a prompt to choose a folder. Choose the root directory of the repo that was just checked out.
 
 4. Now the extension has been added to the browser. Pin the extension to the extensions bar.
 
-5. Navigate to a beatmap page in https://osu.ppy.sh (e.g. https://osu.ppy.sh/beatmapsets/39804#osu/129891).
+5. Navigate to a beatmap page in the [official osu! website](https://osu.ppy.sh) (e.g. https://osu.ppy.sh/beatmapsets/39804#osu/129891).
 
 6. Open the extension popup and enter in some edited values.
 
