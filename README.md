@@ -21,7 +21,7 @@ git clone https://github.com/HDCat2/rate-editor.git
 
 4. Now the extension has been added to the browser. Pin the extension to the extensions bar.
 
-5. Navigate to a beatmap page in the [official osu! website](https://osu.ppy.sh) (e.g. https://osu.ppy.sh/beatmapsets/39804#osu/129891).
+5. Navigate to a beatmap page in the [official osu! website](https://osu.ppy.sh) ([example](https://osu.ppy.sh/beatmapsets/39804#osu/129891)).
 
 6. Open the extension popup and enter in some edited values.
 
