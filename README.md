@@ -15,7 +15,7 @@ osu! Rate Editor is a Google Chrome web extension made for quick, easy, and conv
 ```
 git clone https://github.com/HDCat2/rate-editor.git
 ```
-2. On Google Chrome, navigate to the extensions page (chrome://extensions). On the top right, click 'Load Unpacked'.
+2. On Google Chrome, navigate to the extensions page (chrome://extensions). On the top left, click 'Load Unpacked'.
 
 3. There will be a prompt to choose a folder. Choose the root directory of the repo that was just checked out.
 
