@@ -1,31 +1,31 @@
 # osu! Rate Editor Web Extension
 
-TODO:
+osu! Rate Editor is a Google Chrome web extension made for quick, easy, and convenient edits to osu! beatmaps. 
 
-<del>figure out how to make a web extension</del>
+## Features
 
-<del>figure out a good web extension menu</del>
+* Can edit AR, CS, OD, and HP
+* Can edit the speed of the beatmap to as low as 0.5x or as high as 2x the original
+* Currently only supports editing osu!std beatmaps
+* Currently only 
 
-<del>figure out a basic second web extension menu and how to make it display only on beatmap pages</del>
+## Usage
 
-<del>figure out how to parse regex</del>
+1. Check out the project:
+```
+git clone https://github.com/HDCat2/rate-editor.git
+```
+2. On Google Chrome, navigate to chrome://extensions. On the top right, click 'Load Unpacked'.
 
-<del>figure out how to fetch requisite .osz files</del>
+3. There will be a prompt to choose a folder. Choose the root directory of the repo that was just checked out.
 
-<del>figure out how to make a web extension unzip .osz files</del>
+4. Now the extension is in the browser. Pin the extension to your extensions bar.
 
-<del>figure out how to fill default values and fetch form values</del>
+5. Navigate to a beatmap page in https://osu.ppy.sh (e.g. https://osu.ppy.sh/beatmapsets/39804#osu/129891).
 
-<del>figure out how to check form values</del>
+6. Open the extension popup and enter in your edited values.
 
-<del>figure out how to change playback rate on .mp3 and .ogg files</del>
+7. Click 'download'.
 
-<del>figure out how to make a web extension modify downloaded files</del>
+8. The new beatmap should appear in the downloads folder after a few seconds. Double click on it to open it up in osu!.
 
-<del>figure out what needs to be modified on .osu files</del>
-
-<del>successfully produce modified beatmaps</del>
-
-<del>figure out how to make it look good</del>
-
-change readme and make ready for public
