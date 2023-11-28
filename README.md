@@ -7,7 +7,7 @@ osu! Rate Editor is a Google Chrome web extension made for quick, easy, and conv
 * Can edit AR, CS, OD, and HP
 * Can edit the speed of the beatmap to as low as 0.5x or as high as 2x the original
 * Currently only supports editing osu!std beatmaps
-* Currently only 
+* Currently only can be used on Google Chrome
 
 ## Usage
 
