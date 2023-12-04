@@ -278,6 +278,22 @@ function verifyFields() {
 }
 
 /*
+Modify hit objects
+*/
+function editHitObject(match) {
+    var vals = match.split(',');
+    if (vals.every((x) => !isNaN(x)) && vals.length == 8) { // Check if it's actually a timing point
+        return match;
+    }
+    vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
+    if (Number(vals[3]) & (1 << 3)) { // spinner
+        console.log("spinner detected " + vals[3]);
+        vals[5] = String(Math.round(Number(vals[5])/Number(document.getElementById('input_bpm').value)));
+    }
+    return vals.join(',');
+}
+
+/*
 Modify found timing point according to speed
 */
 function editTimingPoint(match, p1, offset, string) {
@@ -303,7 +319,7 @@ function editCircle(match, p1, offset, string) {
 Modify found slider according to new speed
 */
 function editSlider(match, p1, offset, string) {
-    var vals = p1.split(',');
+    var vals = match.split(',');
     vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
     return vals.join(',');
 }
@@ -313,14 +329,14 @@ function editPreviewTime(match, p1, offset, string) {
 }
 
 function editBreakTiming(math, p1, offset, string) {
-    var vals = p1.split(',');
+    var vals = match.split(',');
     vals[1] = String(Math.round(Number(vals[1])/Number(document.getElementById('input_bpm').value)));
     vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
     return vals.join(',');
 }
 
 function editSpinner(match, p1, offset, string) {
-    var vals = p1.split(',');
+    var vals = match.split(',');
     vals[2] = String(Math.round(Number(vals[2])/Number(document.getElementById('input_bpm').value)));
     vals[5] = String(Math.round(Number(vals[5])/Number(document.getElementById('input_bpm').value)));
     return vals.join(',');
@@ -373,10 +389,8 @@ async function handleDownload() {
 
                 // Alter beatmap timing points & hit objects according to input bpm
                 diffFile = diffFile.replaceAll(/(^[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+,[-\.0-9]+$)/gm, editTimingPoint);
-                diffFile = diffFile.replaceAll(/(^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[:0-9]+$)/gm, editCircle);
-                diffFile = diffFile.replaceAll(/(^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[:0-9]+$)/gm, editSpinner);
-                diffFile = diffFile.replaceAll(/(^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+,[-BCLP|:\.0-9]+,[0-9]+,[\.0-9]+,[|0-9]+,[:|0-9]+,[:0-9]+$)/gm, editSlider);
-                diffFile = diffFile.replaceAll(/(^2,[0-9]+,[0-9]+$)/gm, editBreakTiming);
+                diffFile = diffFile.replaceAll(/^[0-9]+,[0-9]+,[0-9]+,[0-9]+,[0-9]+.*$/gm, editHitObject);
+                diffFile = diffFile.replaceAll(/^(2|Break),[0-9]+,[0-9]+$/gm, editBreakTiming);
 
                 // Add modified .osu file to result zip folder
                 var txtWriter = new zip.TextReader(diffFile);

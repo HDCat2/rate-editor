@@ -12,7 +12,6 @@ div.unsupported {
 }
 
 div.supported {
-    background-color: rgba(50,50,50,.8);
     width: 300px;
     height: 430px;
     border: 1px solid white;
